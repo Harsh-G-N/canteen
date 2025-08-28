@@ -1,11 +1,14 @@
 body {
     font-family: sans-serif;
     background-color: #f4f4f4;
+    margin: 0;
+    min-height: 100vh; /* Ensures footer is always at the bottom, but allows content to grow */
+}
+
+body.login-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
 }
 
 .container {
@@ -216,3 +219,40 @@ header {
     font-size: 1rem;
 }
 
+/* cart item quantity buttons */
+
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Space between buttons and text */
+}
+
+.quantity-btn {
+    background: #e9ecef;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 50%; /* Make them round */
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.quantity-btn:hover {
+    background: #ced4da;
+}
+
+.item-quantity {
+    font-weight: bold;
+}
+
+.customer-order-count {
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: #6c757d; /* A muted grey color */
+    margin-left: 0.5rem;
+}

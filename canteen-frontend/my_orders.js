@@ -33,15 +33,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const displayOrders = (orders) => {
-        if (orders.length === 0) {
-            ordersContainer.innerHTML = '<p>You have not placed any orders yet.</p>';
-            return;
-        }
+    if (orders.length === 0) {
+        ordersContainer.innerHTML = '<p>You have not placed any orders yet.</p>';
+        return;
+    }
 
-        ordersContainer.innerHTML = orders.map(order => `
+    const totalOrders = orders.length; // Get the total count of the user's orders
+
+    // MODIFIED: We now map through the orders and use the index
+    ordersContainer.innerHTML = orders.map((order, index) => {
+        // Since the list is newest-first, we calculate the number like this:
+        const customerOrderNumber = totalOrders - index; 
+        
+        return `
             <div class="order-card">
                 <div class="order-header">
-                    <h4>Order #${order.order_id}</h4>
+                    <h4>Order #${order.order_id} <span class="customer-order-count">(Your ${customerOrderNumber}th Order)</span></h4>
                     <span class="order-status">${order.status}</span>
                 </div>
                 <div class="order-details">
@@ -55,8 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     `).join('')}
                 </ul>
             </div>
-        `).join('');
-    };
+        `
+    }).join('');
+};
 
     fetchMyOrders();
 });

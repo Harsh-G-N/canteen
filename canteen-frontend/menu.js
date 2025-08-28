@@ -94,27 +94,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderCart = () => {
-        cartItemsContainer.innerHTML = ''; // Clear current cart display
+    cartItemsContainer.innerHTML = ''; // Clear current cart display
 
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
-            cartTotalPriceEl.textContent = '0.00';
-            return;
-        }
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+        cartTotalPriceEl.textContent = '0.00';
+        return;
+    }
 
-        let totalPrice = 0;
-        cart.forEach(item => {
-            const cartItemDiv = document.createElement('div');
-            cartItemDiv.className = 'cart-item';
-            cartItemDiv.innerHTML = `
-                <span>${item.name} (x${item.quantity})</span>
+    let totalPrice = 0;
+    cart.forEach(item => {
+        const cartItemDiv = document.createElement('div');
+        cartItemDiv.className = 'cart-item';
+
+        // MODIFIED: Replaced the 'Remove' button with quantity controls
+        cartItemDiv.innerHTML = `
+            <div class="cart-item-details">
+                <span>${item.name}</span>
                 <span>₹${(item.price * item.quantity).toFixed(2)}</span>
-            `;
-            cartItemsContainer.appendChild(cartItemDiv);
-            totalPrice += item.price * item.quantity;
-        });
+            </div>
+            <div class="cart-item-controls">
+                <button class="quantity-btn decrement-btn" data-id="${item.id}">-</button>
+                <span class="item-quantity">${item.quantity}</span>
+                <button class="quantity-btn increment-btn" data-id="${item.id}">+</button>
+            </div>
+        `;
+        
+        cartItemsContainer.appendChild(cartItemDiv);
+        totalPrice += item.price * item.quantity;
+    });
 
-        cartTotalPriceEl.textContent = totalPrice.toFixed(2);
+    cartTotalPriceEl.textContent = totalPrice.toFixed(2);
     };
 
     const placeOrder = async () => {
@@ -156,6 +166,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const updateCartQuantity = (itemId, change) => {
+    const itemInCart = cart.find(item => item.id === itemId);
+
+    if (itemInCart) {
+        itemInCart.quantity += change;
+
+        // If quantity drops to 0 or below, remove the item entirely
+        if (itemInCart.quantity <= 0) {
+            cart = cart.filter(item => item.id !== itemId);
+        }
+    }
+    
+    // Update the cart display
+    renderCart();
+    };
+
 
     // --- Event Listeners ---
     // Using event delegation for dynamically created "Add to Cart" buttons
@@ -169,8 +195,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Add this event listener to the bottom of your menu.js, right before the initial fetchMenu() call
+    cartItemsContainer.addEventListener('click', (event) => {
+    const target = event.target;
+    const itemId = parseInt(target.dataset.id);
+
+    if (target.classList.contains('increment-btn')) {
+        updateCartQuantity(itemId, 1); // Increase by 1
+    }
+
+    if (target.classList.contains('decrement-btn')) {
+        updateCartQuantity(itemId, -1); // Decrease by 1
+    }
+    });
+
     placeOrderBtn.addEventListener('click', placeOrder);
 
     // --- Initial Load ---
     fetchMenu();
 });
+
