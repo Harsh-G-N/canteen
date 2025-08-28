@@ -32,7 +32,7 @@ loginForm.addEventListener('submit', async (event) => {
             localStorage.setItem('token', data.access_token);
             
             // Redirect to the menu page (we will create this next)
-            window.location.href = 'menu.html';
+            window.location.href = 'index.html';
         } else {
             // Login failed, show an error message
             errorMessageDiv.textContent = data.message || 'Login failed!';
