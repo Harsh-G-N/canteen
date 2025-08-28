@@ -1,0 +1,218 @@
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 300px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Add these new styles to your styles.css file */
+/* for menu.html */
+
+.main-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 2rem auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+#logout-button {
+    padding: 0.5rem 1rem;
+    background-color: #dc3545;
+    width: auto; /* Override the full width from the login button */
+}
+
+#logout-button:hover {
+    background-color: #c82333;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.menu-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.menu-item h3 {
+    margin-top: 0;
+}
+
+.add-to-cart-btn {
+    width: auto;
+    padding: 0.5rem 1rem;
+    background-color: #28a745;
+    font-size: 0.9rem;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #218838;
+}
+
+.page-wrapper {
+    display: flex;
+    gap: 2rem;
+    width: 95%;
+    max-width: 1400px;
+    margin: 2rem auto;
+}
+
+.main-container {
+    flex: 3; /* Takes up 3/4 of the space */
+}
+
+.cart-sidebar {
+    flex: 1; /* Takes up 1/4 of the space */
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    align-self: flex-start; /* Aligns to the top */
+}
+
+.cart-sidebar h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-total {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 2px solid #333;
+    text-align: right;
+    font-size: 1.2rem;
+}
+
+#place-order-btn {
+    width: 100%;
+    margin-top: 1rem;
+    background-color: #007bff;
+}
+
+#place-order-btn:hover {
+    background-color: #0056b3;
+}
+
+/* my_orders.html */
+.nav-button {
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 4px;
+    margin-right: 1rem;
+}
+.order-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+}
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+.order-header h4 { margin: 0; }
+.order-status {
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    background: #ffc107;
+    color: #333;
+}
+.order-items-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* admin.html */
+.order-status-updater {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    text-align: right;
+}
+.status-select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+

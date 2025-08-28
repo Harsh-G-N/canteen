@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canteen Menu</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="main-container">
+            <header>
+                <h1>Today's Menu</h1>
+                    <div>
+                        <a href="my_orders.html" class="nav-button">My Orders</a>
+                        <button id="logout-button">Logout</button>
+                    </div>
+            </header>
+            
+            <div id="menu-container" class="menu-grid">
+                </div>
+        </div>
+
+        <aside class="cart-sidebar">
+            <h2>Your Cart</h2>
+            <div id="cart-items">
+                <p>Your cart is empty.</p>
+            </div>
+            <div class="cart-total">
+                <strong>Total: ₹<span id="cart-total-price">0.00</span></strong>
+            </div>
+            <button id="place-order-btn">Place Order</button>
+        </aside>
+    </div>
+    
+    <script src="menu.js"></script>
+</body>
+</html>
