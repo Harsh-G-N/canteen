@@ -1,32 +1,72 @@
-# Import the necessary components from your app
-from app import app, db, bcrypt, User
+from app import app, db, MenuItem, Order, OrderItem
 
-# --- Details for the new user ---
-new_user_name = "Priya"
-new_user_email = "priya.n@example.com"
-new_user_password = "securepassword456"
+# --- Data for the new menu items ---
+new_menu_items = [
+    {
+        "name": "Puttu and Kadala Curry",
+        "price": 80.00,
+        "is_available": True
+    },
+    {
+        "name": "Appam and Stew",
+        "price": 90.00,
+        "is_available": True
+    },
+    {
+        "name": "Masala Dosa",
+        "price": 65.00,
+        "is_available": True
+    },
+    {
+        "name": "Pazham Pori (Banana Fritters)",
+        "price": 12.00,
+        "is_available": True
+    },
+    {
+        "name": "Uzhunnu Vada",
+        "price": 10.00,
+        "is_available": True
+    },
+    {
+        "name": "Kerala Beef Fry",
+        "price": 160.00,
+        "is_available": False # Example of an unavailable item
+    },
+    {
+        "name": "Sulaimani Chai (Spiced Tea)",
+        "price": 15.00,
+        "is_available": True
+    }
+]
 
-# This block ensures the app context is available
-with app.app_context():
-    # Check if the user already exists
-    if not User.query.filter_by(email=new_user_email).first():
-        # Hash the password securely
-        hashed_password = bcrypt.generate_password_hash(new_user_password).decode('utf-8')
 
-        # Create the new User object
-        user_to_add = User(
-            name=new_user_name,
-            email=new_user_email,
-            password_hash=hashed_password,
-            role='customer'  # Explicitly setting the role
-        )
+# The main seeding function
+def seed_data():
+    # All database operations must be within the app context
+    with app.app_context():
+        
+        print("Clearing old data...")
+        # The order of deletion is important to avoid foreign key constraint errors.
+        # Delete items that depend on others first.
+        OrderItem.query.delete()
+        Order.query.delete()
+        MenuItem.query.delete()
+        print("Old menu and order data cleared.")
 
-        # Add the new user to the database session
-        db.session.add(user_to_add)
-
-        # Commit the changes to the database
+        print("Adding new menu items...")
+        # Add new menu items from the list above
+        for item_data in new_menu_items:
+            item = MenuItem(
+                name=item_data['name'],
+                price=item_data['price'],
+                is_available=item_data['is_available']
+            )
+            db.session.add(item)
+        
+        # Commit all the changes to the database
         db.session.commit()
+        print("Seeding complete!")
 
-        print(f"User '{new_user_name}' with email '{new_user_email}' was added successfully! ✅")
-    else:
-        print(f"User with email '{new_user_email}' already exists. ❌")
+# This makes the script runnable from the command line
+if __name__ == '__main__':
+    seed_data()

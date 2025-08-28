@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Menu Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>Menu Management</h1>
+            <div>
+                <a href="admin.html" class="nav-button">Order Dashboard</a>
+                <button id="logout-button">Logout</button>
+            </div>
+        </header>
+
+        <div class="form-container card">
+            <h2>Add New Menu Item</h2>
+            <form id="add-item-form">
+                <div class="form-group">
+                    <label for="name">Item Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price (₹)</label>
+                    <input type="number" id="price" step="0.01" required>
+                </div>
+                <div class="form-group-inline">
+                    <label for="is_available">Is Available?</label>
+                    <input type="checkbox" id="is_available" checked>
+                </div>
+                <button type="submit">Add Item</button>
+            </form>
+        </div>
+
+        <h2>Existing Menu Items</h2>
+        <div id="menu-list-container">
+            </div>
+    </div>
+
+    <div id="edit-modal" class="modal-backdrop hidden">
+        <div class="modal-content card">
+            <h2>Edit Menu Item</h2>
+            <form id="edit-item-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-name">Item Name</label>
+                    <input type="text" id="edit-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-price">Price (₹)</label>
+                    <input type="number" id="edit-price" step="0.01" required>
+                </div>
+                <div class="form-group-inline">
+                    <label for="edit-is_available">Is Available?</label>
+                    <input type="checkbox" id="edit-is_available">
+                </div>
+                <div class="modal-actions">
+                    <button type="submit">Save Changes</button>
+                    <button type="button" id="cancel-edit-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin_menu.js"></script>
+</body>
+</html>

@@ -94,25 +94,52 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const placeOrder = async () => {
-        if (cart.length === 0) { alert('Your cart is empty!'); return; }
-        const orderData = { items: cart.map(item => ({ menu_item_id: item.id, quantity: item.quantity })) };
-        try {
-            const response = await fetch('http://127.0.0.1:5000/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify(orderData)
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to place order');
-            }
-            alert('Order placed successfully!');
-            cart = [];
-            renderCart();
-        } catch (error) {
-            alert(`Error: ${error.message}`);
+    const currentToken = localStorage.getItem('token');
+
+    // Guard clause in case the token is missing
+    if (!currentToken) {
+        alert('Authentication error. Please log in again.');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+    }
+    
+    placeOrderBtn.disabled = true;
+    
+    const orderData = { items: cart.map(item => ({ menu_item_id: item.id, quantity: item.quantity })) };
+    
+    try {
+        const response = await fetch('http://127.0.0.1:5000/api/orders', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Authorization': `Bearer ${currentToken}` 
+            },
+            body: JSON.stringify(orderData)
+        });
+
+        if (response.status === 401) {
+             throw new Error('Your session has expired. Please log in again.');
         }
-    };
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to place order');
+        }
+        
+        alert('Order placed successfully!'); 
+        cart = [];
+        renderCart();
+        
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    } finally {
+        placeOrderBtn.disabled = false;
+    }
+};
 
     // --- Event Listeners ---
     menuContainer.addEventListener('click', (event) => {

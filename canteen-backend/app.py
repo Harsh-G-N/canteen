@@ -173,11 +173,11 @@ def delete_menu_item(item_id):
     item = MenuItem.query.get_or_404(item_id)
     
     # Delete the item
-    db.session.delete(item)
+    item.is_available = False # Soft delete by marking as unavailable
     db.session.commit()
     
     # Return a success message
-    return jsonify({'message': f'Item with id {item_id} has been deleted successfully.'})
+    return jsonify({'message': f'Item with id {item_id} has been marked as unavailable.'})
 
 # ---------------------User Registration Route ----------------------------------
 @app.route('/api/register', methods=['POST'])
