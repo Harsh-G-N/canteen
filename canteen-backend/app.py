@@ -62,6 +62,14 @@ class User(db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='customer') # e.g., 'customer', 'admin'
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'role': self.role
+        }
+
 # Order and OrderItem Models
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -325,6 +333,38 @@ def update_order_status(order_id):
     db.session.commit()
     
     return jsonify(order.to_dict())
+
+
+#api to get the list of all users (for admin only)
+@app.route('/api/admin/users', methods=['GET'])
+@admin_required()
+def get_all_users():
+    users = User.query.all()
+    return jsonify([user.to_dict() for user in users])
+
+
+#api to update the role of specific user (for admin only)
+@app.route('/api/admin/users/<int:user_id>', methods=['PUT'])
+@admin_required()
+def update_user_role(user_id):
+    user = User.query.get_or_404(user_id)
+    data = request.get_json()
+    
+    new_role = data.get('role')
+    if new_role not in ['customer', 'admin']:
+        return jsonify({'message': 'Invalid role specified'}), 400
+    
+     # Check if we are trying to demote the last admin
+    if user.role == 'admin' and new_role == 'customer':
+        admin_count = User.query.filter_by(role='admin').count()
+        if admin_count <= 1:
+            # 403 Forbidden is a good status code for this
+            return jsonify({'message': 'Cannot demote the last admin.'}), 403
+        
+    user.role = new_role
+    db.session.commit()
+    
+    return jsonify(user.to_dict())
 
 
 # --- Main execution point ---

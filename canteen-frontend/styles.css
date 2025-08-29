@@ -312,3 +312,34 @@ header {
     margin-top: 1.5rem;
 }
 .hidden { display: none !important; }
+
+/* To style 'already have an account' in register.html */
+.form-link {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+/* For admin_users.html */
+.user-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+.user-list-item:last-child { border-bottom: none; }
+.user-details {
+    flex-grow: 1;
+}
+.user-role-select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.section-divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 2rem 0;
+}

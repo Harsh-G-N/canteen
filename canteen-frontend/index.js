@@ -31,7 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = 'index.html';
             });
         } else {
-            userNav.innerHTML = `<a href="login.html" class="nav-button">Login</a>`;
+            userNav.innerHTML = `<a href="login.html" class="nav-button">Login</a>
+                                <a href="register.html" class="nav-button">Register</a>
+                            `;
         }
     };
     
