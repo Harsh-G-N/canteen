@@ -1,72 +1,69 @@
-from app import app, db, MenuItem, Order, OrderItem
+from app import app, db, User, bcrypt
 
-# --- Data for the new menu items ---
-new_menu_items = [
+# --- List of users to add ---
+users_to_add = [
     {
-        "name": "Puttu and Kadala Curry",
-        "price": 80.00,
-        "is_available": True
+        "name": "Harsh",
+        "email": "harsh@gmail.com",
+        "password": "harsh123",
+        "role": "admin"
     },
     {
-        "name": "Appam and Stew",
-        "price": 90.00,
-        "is_available": True
+        "name": "Priya Menon",
+        "email": "priya.menon@example.com",
+        "password": "customerpassword1",
+        "role": "customer"
     },
     {
-        "name": "Masala Dosa",
-        "price": 65.00,
-        "is_available": True
-    },
-    {
-        "name": "Pazham Pori (Banana Fritters)",
-        "price": 12.00,
-        "is_available": True
-    },
-    {
-        "name": "Uzhunnu Vada",
-        "price": 10.00,
-        "is_available": True
-    },
-    {
-        "name": "Kerala Beef Fry",
-        "price": 160.00,
-        "is_available": False # Example of an unavailable item
-    },
-    {
-        "name": "Sulaimani Chai (Spiced Tea)",
-        "price": 15.00,
-        "is_available": True
+        "name": "Sanjay Kumar",
+        "email": "sanjay.kumar@example.com",
+        "password": "customerpassword2",
+        "role": "customer"
     }
 ]
 
-
-# The main seeding function
-def seed_data():
+def create_users():
     # All database operations must be within the app context
     with app.app_context():
+        print("Starting to add users...")
         
-        print("Clearing old data...")
-        # The order of deletion is important to avoid foreign key constraint errors.
-        # Delete items that depend on others first.
-        OrderItem.query.delete()
-        Order.query.delete()
-        MenuItem.query.delete()
-        print("Old menu and order data cleared.")
+        for user_data in users_to_add:
+            # Check if a user with this email already exists
+            existing_user = User.query.filter_by(email=user_data['email']).first()
+            
+            if existing_user:
+                print(f"User with email {user_data['email']} already exists. Skipping.")
+                continue
 
-        print("Adding new menu items...")
-        # Add new menu items from the list above
-        for item_data in new_menu_items:
-            item = MenuItem(
-                name=item_data['name'],
-                price=item_data['price'],
-                is_available=item_data['is_available']
-            )
-            db.session.add(item)
-        
+            # If the user doesn't exist, create and add them
+            try:
+                # Hash the password
+                hashed_password = bcrypt.generate_password_hash(user_data['password']).decode('utf-8')
+                
+                # Create a new User object
+                new_user = User(
+                    name=user_data['name'],
+                    email=user_data['email'],
+                    password_hash=hashed_password,
+                    role=user_data['role']
+                )
+                
+                # Add the new user to the session
+                db.session.add(new_user)
+                print(f"Adding user: {user_data['name']} ({user_data['email']})")
+
+            except Exception as e:
+                print(f"Error adding user {user_data['email']}: {e}")
+                db.session.rollback() # Rollback in case of an error with one user
+                
         # Commit all the changes to the database
-        db.session.commit()
-        print("Seeding complete!")
+        try:
+            db.session.commit()
+            print("All new users have been added successfully.")
+        except Exception as e:
+            print(f"Error committing to database: {e}")
+            db.session.rollback()
 
 # This makes the script runnable from the command line
 if __name__ == '__main__':
-    seed_data()
+    create_users()

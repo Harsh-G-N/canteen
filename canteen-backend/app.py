@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager, get_jwt
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from functools import wraps
 from flask_cors import CORS
 
@@ -87,6 +87,7 @@ class OrderItem(db.Model):
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    daily_order_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     total_amount = db.Column(db.Float, nullable=False)
     order_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -96,6 +97,7 @@ class Order(db.Model):
     def to_dict(self):
         return {
             'order_id': self.id,
+            'daily_order_id': self.daily_order_id,
             'total_amount': self.total_amount,
             # Format the date to a more readable string
             'order_date': self.order_date.isoformat(), 
@@ -249,16 +251,22 @@ def profile():
 @app.route('/api/orders', methods=['POST'])
 @jwt_required()
 def place_order():
-    current_user_id = int(get_jwt_identity())
+    current_user_id = get_jwt_identity()
     data = request.get_json()
     if not data or 'items' not in data or not isinstance(data['items'], list) or not data['items']:
         return jsonify({'message': 'Invalid or empty order data provided'}), 400
 
-    total_amount = 0
-    order_items_data = []
-
     try:
-        # Step 1: Validate items and calculate total
+        # --- NEW LOGIC TO CALCULATE DAILY ORDER ID ---
+        today_start = datetime.combine(date.today(), datetime.min.time(), tzinfo=timezone.utc)
+        orders_today_count = db.session.query(Order).filter(Order.order_date >= today_start).count()
+        new_daily_id = orders_today_count + 1
+        # --- END OF NEW LOGIC ---
+
+        total_amount = 0
+        order_items_data = []
+
+        # (The rest of your item validation and total calculation logic is the same)
         for item_data in data['items']:
             menu_item = MenuItem.query.get(item_data.get('menu_item_id'))
             quantity = item_data.get('quantity')
@@ -267,23 +275,20 @@ def place_order():
             total_amount += menu_item.price * quantity
             order_items_data.append({'menu_item': menu_item, 'quantity': quantity})
 
-        # Step 2: Create Order and OrderItem objects and add to session
-        new_order = Order(user_id=current_user_id, total_amount=total_amount)
+        # MODIFIED: Add the daily_order_id when creating the order
+        new_order = Order(user_id=current_user_id, total_amount=total_amount, daily_order_id=new_daily_id)
         db.session.add(new_order)
-        # Flush to get the new_order.id before commit
         db.session.flush()
 
         for item in order_items_data:
             order_item = OrderItem(order_id=new_order.id, menu_item_id=item['menu_item'].id, quantity=item['quantity'])
             db.session.add(order_item)
 
-        # Step 3: Commit the single transaction
         db.session.commit()
-
         return jsonify({'message': 'Order placed successfully', 'order': new_order.to_dict()}), 201
 
     except Exception as e:
-        db.session.rollback() # Rollback the transaction in case of any error
+        db.session.rollback()
         return jsonify({'message': 'Failed to place order', 'error': str(e)}), 500
 
 # --- API Route to GET a user's own orders ---
