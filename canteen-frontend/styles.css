@@ -343,3 +343,17 @@ header {
     border-top: 1px solid #eee;
     margin: 2rem 0;
 }
+
+/* Add these styles to styles.css */
+.order-status {
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    color: #333;
+    text-align: center;
+}
+
+.order-status.status-pending { background-color: #ffc107; } /* Yellow */
+.order-status.status-confirmed { background-color: #17a2b8; color: white; } /* Blue */
+.order-status.status-completed { background-color: #28a745; color: white; } /* Green */
+.order-status.status-cancelled { background-color: #dc3545; color: white; } /* Red */

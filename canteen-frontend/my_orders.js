@@ -12,6 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ordersContainer = document.getElementById('orders-container');
 
+    const getStatusClass = (status) => {
+    switch (status) {
+        case 'Awaiting Approval': return 'status-pending';
+        case 'Confirmed': return 'status-confirmed';
+        case 'Completed': return 'status-completed';
+        case 'Cancelled': return 'status-cancelled';
+        default: return '';
+    }
+    };
+
     const fetchMyOrders = async () => {
         try {
             const response = await fetch('http://127.0.0.1:5000/api/orders', {
@@ -76,7 +86,7 @@ const displayGroupedOrders = (orders, container, is_admin_view = false) => {
                         <h4>Order #${order.daily_order_id} 
                             ${!is_admin_view ? `<span class="customer-order-count">(Your ${customerOrderNumber}st Order)</span>` : ''}
                         </h4>
-                        <span class="order-status">${order.status}</span>
+                        <span class="order-status ${getStatusClass(order.status)}">${order.status}</span>
                     </div>
                     <div class="order-details">
                         <p><strong>Time:</strong> ${new Date(order.order_date).toLocaleTimeString('en-IN')}</p>

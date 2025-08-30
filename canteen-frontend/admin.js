@@ -12,6 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ordersContainer = document.getElementById('admin-orders-container');
 
+    const getStatusClass = (status) => {
+    switch (status) {
+        case 'Awaiting Approval': return 'status-pending';
+        case 'Confirmed': return 'status-confirmed';
+        case 'Completed': return 'status-completed';
+        case 'Cancelled': return 'status-cancelled';
+        default: return '';
+    }
+    };
+
     const fetchAllOrders = async () => {
         try {
             const response = await fetch('http://127.0.0.1:5000/api/admin/orders', {
@@ -67,7 +77,8 @@ const displayGroupedOrders = (orders, container, is_admin_view = false) => {
                 <div class="order-status-updater">
                     <label for="status-${order.order_id}">Status:</label>
                     <select class="status-select" data-order-id="${order.order_id}">
-                        <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Awaiting Approval" ${order.status === 'Awaiting Approval' ? 'selected' : ''}>Awaiting Approval</option>
+                        <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
                         <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
                         <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
                     </select>
@@ -79,7 +90,7 @@ const displayGroupedOrders = (orders, container, is_admin_view = false) => {
                         <h4>Order #${order.daily_order_id} 
                             ${!is_admin_view ? `<span class="customer-order-count">(Your ${customerOrderNumber}st Order)</span>` : ''}
                         </h4>
-                        <span class="order-status">${order.status}</span>
+                            <span class="order-status ${getStatusClass(order.status)}">${order.status}</span>
                     </div>
                     <div class="order-details">
                         <p><strong>Time:</strong> ${new Date(order.order_date).toLocaleTimeString('en-IN')}</p>
@@ -125,6 +136,7 @@ const displayGroupedOrders = (orders, container, is_admin_view = false) => {
             updateOrderStatus(orderId, newStatus);
         }
     });
+
 
     fetchAllOrders();
 });

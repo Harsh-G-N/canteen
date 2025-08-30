@@ -91,7 +91,7 @@ class Order(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     total_amount = db.Column(db.Float, nullable=False)
     order_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    status = db.Column(db.String(20), nullable=False, default='Pending')
+    status = db.Column(db.String(20), nullable=False, default='Awaiting Approval')
     items = db.relationship('OrderItem', backref='order', lazy=True, cascade="all, delete-orphan") # Added cascade
 
     def to_dict(self):
@@ -329,7 +329,7 @@ def update_order_status(order_id):
         return jsonify({'message': 'Missing status field'}), 400
 
     # Optional: More robust validation
-    valid_statuses = ['Pending', 'Completed', 'Cancelled']
+    valid_statuses = ['Awaiting Approval', 'Confirmed', 'Completed', 'Cancelled']
     if new_status not in valid_statuses:
         return jsonify({'message': f'Invalid status. Must be one of: {valid_statuses}'}), 400
 
