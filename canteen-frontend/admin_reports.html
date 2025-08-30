@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Sales Reports</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>Sales Reports</h1>
+            <div>
+                <a href="admin.html" class="nav-button">Order Dashboard</a>
+                <button id="logout-button">Logout</button>
+            </div>
+        </header>
+
+        <div class="card">
+            <h2>Generate Report</h2>
+            <form id="report-form" class="form-inline">
+                <div class="form-group">
+                    <label for="start-date">Start Date</label>
+                    <input type="date" id="start-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="end-date">End Date</label>
+                    <input type="date" id="end-date" required>
+                </div>
+                <button type="submit">Generate</button>
+            </form>
+        </div>
+
+        <div id="report-results" class="hidden">
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>Total Revenue</h3>
+                    <p id="total-revenue">₹0.00</p>
+                </div>
+                <div class="card">
+                    <h3>Total Orders</h3>
+                    <p id="total-orders">0</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Item Sales Breakdown</h3>
+                <table class="sales-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-breakdown">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script src="admin_reports.js"></script>
+</body>
+</html>

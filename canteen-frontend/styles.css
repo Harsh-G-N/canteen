@@ -357,3 +357,32 @@ header {
 .order-status.status-confirmed { background-color: #17a2b8; color: white; } /* Blue */
 .order-status.status-completed { background-color: #28a745; color: white; } /* Green */
 .order-status.status-cancelled { background-color: #dc3545; color: white; } /* Red */
+
+/* Add to styles.css */
+.form-inline {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+}
+.summary-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.summary-cards p {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+}
+.sales-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+.sales-table th, .sales-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+.sales-table th { background-color: #f8f9fa; }

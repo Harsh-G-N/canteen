@@ -3,9 +3,11 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager, get_jwt
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timezone, timedelta
 from functools import wraps
 from flask_cors import CORS
+from sqlalchemy import func
+
 
 # --- Custom Decorator for Admin-Only Routes ---
 def admin_required():
@@ -370,6 +372,64 @@ def update_user_role(user_id):
     db.session.commit()
     
     return jsonify(user.to_dict())
+
+# API endpoint to get Sales Report
+
+@app.route('/api/admin/reports/sales', methods=['GET'])
+@admin_required()
+def get_sales_report():
+    # Get date range from query parameters, default to today
+    start_date_str = request.args.get('start_date')
+    end_date_str = request.args.get('end_date')
+
+    try:
+        if start_date_str:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        else:
+            start_date = date.today()
+
+        if end_date_str:
+            # Add one day to the end_date to include the entire day in the query
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date() + timedelta(days=1)
+        else:
+            end_date = date.today() + timedelta(days=1)
+    except ValueError:
+        return jsonify({"message": "Invalid date format. Please use YYYY-MM-DD."}), 400
+
+    # --- Query for summary data ---
+    # We only care about orders that are 'Completed'
+    completed_orders_query = Order.query.filter(
+        Order.status == 'Completed',
+        Order.order_date >= start_date,
+        Order.order_date < end_date
+    )
+    
+    total_revenue = completed_orders_query.with_entities(func.sum(Order.total_amount)).scalar() or 0
+    total_orders = completed_orders_query.count()
+
+    # --- Query for itemized breakdown ---
+    item_breakdown_query = db.session.query(
+        MenuItem.name,
+        func.sum(OrderItem.quantity).label('total_quantity')
+    ).join(OrderItem, OrderItem.menu_item_id == MenuItem.id)\
+     .join(Order, Order.id == OrderItem.order_id)\
+     .filter(
+        Order.status == 'Completed',
+        Order.order_date >= start_date,
+        Order.order_date < end_date
+    ).group_by(MenuItem.name).order_by(func.sum(OrderItem.quantity).desc())
+
+    item_breakdown = [{"name": name, "quantity": qty} for name, qty in item_breakdown_query.all()]
+
+    return jsonify({
+        "summary": {
+            "total_revenue": total_revenue,
+            "total_orders": total_orders,
+            "start_date": start_date.strftime('%Y-%m-%d'),
+            "end_date": (end_date - timedelta(days=1)).strftime('%Y-%m-%d')
+        },
+        "item_breakdown": item_breakdown
+    })
 
 
 # --- Main execution point ---
