@@ -29,7 +29,15 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # --- App and Database Configuration ---
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
+
+# This logic checks if a production DATABASE_URL is set, otherwise falls back to SQLite
+database_url = os.getenv("DATABASE_URL")
+if database_url:
+    # The Render database URL starts with postgres://, but SQLAlchemy needs postgresql://
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("postgres://", "postgresql://", 1)
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["JWT_SECRET_KEY"] = "79817e82e000a37e7e63449afc628c52" 
 jwt = JWTManager(app)
