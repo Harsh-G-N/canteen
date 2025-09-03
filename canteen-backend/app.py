@@ -28,7 +28,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # --- App and Database Configuration ---
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "https://my-canteen-123.netlify.app"}})
 
 # This logic checks if a production DATABASE_URL is set, otherwise falls back to SQLite
 database_url = os.getenv("DATABASE_URL")
