@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Data & Logic Functions ---
     const fetchMenu = async () => {
         try {
-            const response = await fetch('${API_BASE_URL}/api/menu');
+            const response = await fetch(`${API_BASE_URL}/api/menu`);
             if (!response.ok) throw new Error('Failed to fetch menu');
             allMenuItems = await response.json();
             displayMenu(allMenuItems);
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderData = { items: cart.map(item => ({ menu_item_id: item.id, quantity: item.quantity })) };
     
     try {
-        const response = await fetch('${API_BASE_URL}/api/orders', {
+    const response = await fetch(`${API_BASE_URL}/api/orders`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json', 

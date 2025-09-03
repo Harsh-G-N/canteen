@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchAndDisplayUsers = async () => {
         try {
-            const response = await fetch('${API_BASE_URL}/api/admin/users', {
+            const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.status === 403) {
