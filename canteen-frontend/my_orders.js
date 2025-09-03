@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = 'https://canteen-4yw2.onrender.com'; // Your live URL
     const token = localStorage.getItem('token');
     if (!token) {
         window.location.href = 'login.html';
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchMyOrders = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/orders', {
+            const response = await fetch('${API_BASE_URL}/api/orders', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`

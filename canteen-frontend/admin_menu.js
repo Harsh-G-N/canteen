@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = 'https://canteen-4yw2.onrender.com'; // Your live URL
+
     // --- Auth Check ---
     const token = localStorage.getItem('token');
     if (!token) { window.location.href = 'login.html'; return; }
@@ -15,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- API Functions ---
     const fetchAndDisplayMenu = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/menu');
+            const response = await fetch('${API_BASE_URL}/api/menu');
             if (!response.ok) throw new Error('Failed to fetch menu');
             allMenuItems = await response.json();
             
@@ -39,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             is_available: document.getElementById('is_available').checked,
         };
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/menu', {
+            const response = await fetch('${API_BASE_URL}/api/menu', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(newItem)
@@ -53,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleDeleteItem = async (itemId) => {
         if (!confirm('Are you sure you want to delete this item?')) return;
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/menu/${itemId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/menu/${itemId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             is_available: document.getElementById('edit-is_available').checked,
         };
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/menu/${itemId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/menu/${itemId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(updatedItem)

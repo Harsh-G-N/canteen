@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = 'https://canteen-4yw2.onrender.com'; // Your live URL
     // --- Get Elements ---
     const token = localStorage.getItem('token');
     const userNav = document.getElementById('user-nav');
@@ -70,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Data & Logic Functions ---
     const fetchMenu = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/menu');
+            const response = await fetch('${API_BASE_URL}/api/menu');
             if (!response.ok) throw new Error('Failed to fetch menu');
             allMenuItems = await response.json();
             displayMenu(allMenuItems);
@@ -115,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderData = { items: cart.map(item => ({ menu_item_id: item.id, quantity: item.quantity })) };
     
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/orders', {
+        const response = await fetch('${API_BASE_URL}/api/orders', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json', 

@@ -1,4 +1,5 @@
 // Get the form element
+const API_BASE_URL = 'https://canteen-4yw2.onrender.com'; // Your live URL
 const loginForm = document.getElementById('login-form');
 const errorMessageDiv = document.getElementById('error-message');
 
@@ -16,7 +17,7 @@ loginForm.addEventListener('submit', async (event) => {
 
     // Send the data to your backend API
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/login', {
+        const response = await fetch('${API_BASE_URL}/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

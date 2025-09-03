@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = 'https://canteen-4yw2.onrender.com'; // Your live URL
     // --- Auth Check ---
     const token = localStorage.getItem('token');
     if (!token) { window.location.href = 'login.html'; return; }
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const endDate = document.getElementById('end-date').value;
         
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/admin/reports/sales?start_date=${startDate}&end_date=${endDate}`, {
+            const response = await fetch(`${API_BASE_URL}/api/admin/reports/sales?start_date=${startDate}&end_date=${endDate}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.status === 403) {

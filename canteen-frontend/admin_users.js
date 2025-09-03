@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = 'https://canteen-4yw2.onrender.com'; // Your live URL
     // --- Auth Check ---
     const token = localStorage.getItem('token');
     if (!token) { window.location.href = 'login.html'; return; }
@@ -9,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchAndDisplayUsers = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/admin/users', {
+            const response = await fetch('${API_BASE_URL}/api/admin/users', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.status === 403) {
@@ -61,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newRole = selectElement.value;
 
     try {
-        const response = await fetch(`http://127.0.0.1:5000/api/admin/users/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ role: newRole })
