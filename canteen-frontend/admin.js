@@ -130,11 +130,30 @@ const displayGroupedOrders = (orders, container, is_admin_view = false) => {
     };
     
     // Event listener for status changes using event delegation
-    ordersContainer.addEventListener('change', (event) => {
+    ordersContainer.addEventListener('change', async (event) => {
         if (event.target.classList.contains('status-select')) {
-            const orderId = event.target.dataset.orderId;
-            const newStatus = event.target.value;
-            updateOrderStatus(orderId, newStatus);
+            const selectElem = event.target;
+            const orderId = selectElem.dataset.orderId;
+            const newStatus = selectElem.value;
+
+            // 1. Call the API to update the backend
+            await updateOrderStatus(orderId, newStatus);
+
+            // 2. Update the UI Badge immediately
+            // Find the specific card where this change happened
+            const orderCard = selectElem.closest('.order-card');
+            
+            // Find the status badge inside that card
+            const statusBadge = orderCard.querySelector('.order-status');
+
+            if (statusBadge) {
+                // Update the text
+                statusBadge.textContent = newStatus;
+                
+                // Update the color by resetting the class
+                // (This uses the getStatusClass helper we made earlier)
+                statusBadge.className = `order-status ${getStatusClass(newStatus)}`;
+            }
         }
     });
 
