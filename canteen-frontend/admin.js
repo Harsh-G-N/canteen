@@ -148,10 +148,7 @@ const displayGroupedOrders = (orders, container, is_admin_view = false) => {
     // Listen for the 'update_orders' event from the backend
     socket.on('update_orders', (data) => {
         console.log('New order notification received:', data);
-        
-        // Show an alert to the admin
-        alert("New Order Received! Refreshing list..."); 
-        
+         
         // Refresh the order list immediately without reloading the page
         fetchAllOrders(); 
     });
