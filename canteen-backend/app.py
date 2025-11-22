@@ -7,6 +7,7 @@ from datetime import date, datetime, timezone, timedelta
 from functools import wraps
 from flask_cors import CORS
 from sqlalchemy import func
+from flask_socketio import SocketIO
 
 
 # --- Custom Decorator for Admin-Only Routes ---
@@ -29,6 +30,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # --- App and Database Configuration ---
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "https://my-canteen-123.netlify.app"}})
+
+# cors_allowed_origins="*" allows the frontend to connect from anywhere (Netlify)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # This logic checks if a production DATABASE_URL is set, otherwise falls back to SQLite
 database_url = os.getenv("DATABASE_URL")
@@ -295,6 +299,11 @@ def place_order():
             db.session.add(order_item)
 
         db.session.commit()
+        # --- Broadcast the event via WebSocket ---
+        # We emit an event named 'update_orders'. 
+        # Any client listening for this event will know a new order arrived.
+        socketio.emit('update_orders', {'message': 'New order received!'}) 
+
         return jsonify({'message': 'Order placed successfully', 'order': new_order.to_dict()}), 201
 
     except Exception as e:
@@ -442,4 +451,4 @@ def get_sales_report():
 
 # --- Main execution point ---
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
