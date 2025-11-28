@@ -1,0 +1,29 @@
+# Ignore the virtual environment directory
+venv/
+env/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Git version control files
+.git/
+.gitignore
+
+# Ignore VS Code or Editor settings
+.vscode/
+.idea/
+
+# Ignore documentation (optional, but saves space)
+README.md
+
+# Ignore the Dockerfile itself (usually not needed inside the app)
+Dockerfile
+.dockerignore
+
+database.db
+build.sh
+
+.env

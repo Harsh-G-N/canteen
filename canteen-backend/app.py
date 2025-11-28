@@ -11,6 +11,7 @@ from functools import wraps
 from flask_cors import CORS
 from sqlalchemy import func
 from flask_socketio import SocketIO
+from dotenv import load_dotenv
 
 
 # --- Custom Decorator for Admin-Only Routes ---
@@ -30,12 +31,17 @@ def admin_required():
 # Get the absolute path of the directory where this file is located
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+# Load environment variables from .env file
+load_dotenv()
+
 # --- App and Database Configuration ---
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://my-canteen-123.netlify.app"}})
 
-# cors_allowed_origins="*" allows the frontend to connect from anywhere (Netlify)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+frontend_origin = os.getenv("FRONTEND_ORIGIN", "*")
+
+CORS(app, resources={r"/api/*": {"origins": frontend_origin}})
+
+socketio = SocketIO(app, cors_allowed_origins=[frontend_origin], async_mode='eventlet')
 
 # This logic checks if a production DATABASE_URL is set, otherwise falls back to SQLite
 database_url = os.getenv("DATABASE_URL")
@@ -46,7 +52,7 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config["JWT_SECRET_KEY"] = "79817e82e000a37e7e63449afc628c52" 
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY") 
 jwt = JWTManager(app)
 
 
@@ -454,4 +460,6 @@ def get_sales_report():
 
 # --- Main execution point ---
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    # Use os.getenv to enable debug only locally if needed
+    is_debug = os.getenv('FLASK_DEBUG', 'False') == 'True'
+    socketio.run(app, host='0.0.0.0', port=5000, debug=is_debug)

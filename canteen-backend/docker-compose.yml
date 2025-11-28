@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # Service 1: Your Flask Backend
+  backend:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  # Service 2: The Database
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    # This maps the database data to a folder on your laptop so it survives restarts!
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# Define the volume name
+volumes:
+  postgres_data:
