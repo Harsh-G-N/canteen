@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = 'https://canteen-4yw2.onrender.com'; // Your live URL
+    const API_BASE_URL = 'http://16.112.15.225:5000'; // Your live URL
     const token = localStorage.getItem('token');
     if (!token) {
         window.location.href = 'login.html';
