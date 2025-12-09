@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = 'http://16.112.15.225:5000'; // Your live URL
     const registerForm = document.getElementById('register-form');
     const errorMessageDiv = document.getElementById('error-message');
 
