@@ -1,0 +1,57 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "aws-devops" ]  # Runs only when you push to your dev branch
+
+jobs:
+  # JOB 1: BUILD AND DEPLOY BACKEND
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./canteen-backend
+          push: true
+          # Make sure this matches your Docker Hub repo name!
+          tags: ${{ secrets.DOCKER_USERNAME }}/canteen-backend:v1
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd canteen
+            docker-compose pull
+            docker-compose up -d
+
+  # JOB 2: DEPLOY FRONTEND TO S3
+  deploy-frontend:
+    needs: deploy-backend  # Waits for backend to finish first
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Upload to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: canteen-app-frontend-harsh08 # <--- REPLACE THIS WITH YOUR ACTUAL BUCKET NAME
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'ap-south-2'
+          SOURCE_DIR: 'canteen-frontend' 
